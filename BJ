@@ -1,0 +1,176 @@
+import random
+
+
+player_hand = []
+
+computer_hand = []
+
+
+suits = ["♠", "♥", "♦", "♣"]
+
+values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+
+x = 2
+
+y = 2
+
+
+deck = [(value, suit) for suit in suits for value in values]
+
+
+for _ in range(4):
+
+    random.shuffle(deck)
+
+
+def draw_card(hand):
+
+    hand.append(deck.pop())
+
+
+for _ in range(2):
+
+    draw_card(player_hand)
+
+    draw_card(computer_hand)
+
+
+print(f'Player drew {player_hand[0]}')
+
+print(f'Computer drew {computer_hand[0]}')
+
+print(f'Player drew {player_hand[1]}')
+
+print('Computer drew face down card')
+
+
+def calculate_hand_value(hand):
+
+    for item in hand:
+
+        value = item[0]
+
+        suit = item[-1]
+
+
+    total = 0
+
+    aces = 0
+
+    for value, suit in hand:
+
+        if value in ('J','Q','K'):
+
+            total += 10
+
+        elif value == 'A':
+
+            aces += 1
+
+            total += 11
+
+        else:
+
+            total += int(value)
+
+        while aces > 0 and total > 21:
+
+            total -= 10
+
+            aces -= 1
+
+    return total
+
+
+while True:
+
+    answer = input('Do you want to Hit or Stand?')
+
+    if answer == 'Hit':
+
+        draw_card(player_hand)
+
+        print(f'Player drew{player_hand[x]} ')
+
+        x += 1
+
+        if calculate_hand_value(player_hand) > 21:
+
+            print(f'Player loses, becouse their total is {calculate_hand_value(player_hand)}, which is more than 21')
+
+            first_checkpoint = False
+
+            second_checkpoint = False
+
+            break
+
+        elif calculate_hand_value(player_hand) == 21:
+
+            print('Player wins, becouse their total is exactly 21')
+
+            first_checkpoint = False
+
+            second_checkpoint = False
+
+            break
+
+    elif answer == 'Stand':
+
+        first_checkpoint = True
+
+        break
+
+
+print(f'The computer is showing his facedown card. It is a {computer_hand[1]}')
+
+
+while first_checkpoint:
+
+    if calculate_hand_value(computer_hand) < 16:
+
+        draw_card(computer_hand)
+
+        print(f'Computer draw another card becouse his total is lower than 16. He drew {computer_hand[y]}')
+
+        y += 1
+
+        if calculate_hand_value(computer_hand) > 21:
+
+            print(f'Computer loses, becouse their total is {calculate_hand_value(computer_hand)}, which is more than 21')
+
+            second_checkpoint = False
+
+            break
+
+        elif calculate_hand_value(computer_hand) == 21:
+
+            print('Computer wins, becouse their total is exactly 21')
+
+            second_checkpoint = False
+
+            break
+
+    second_checkpoint = True
+
+    break
+
+
+while second_checkpoint:
+
+    if calculate_hand_value(computer_hand) > calculate_hand_value(player_hand):
+
+        print('Computer win this round, as it had bigger total than you')
+
+        break
+
+    elif calculate_hand_value(computer_hand) < calculate_hand_value(player_hand):
+
+        print('Player win this round, as he had bigger total than computer')
+
+        break
+
+    else:
+
+        print('Nobody win this round, as both of you had the same total')
+
+        break
